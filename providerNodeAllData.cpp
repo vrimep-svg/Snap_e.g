@@ -6,6 +6,8 @@
 
 #include <string>
 #include <chrono>
+#include <sstream>
+#include <iomanip>
 
 #include "providerNodeAllData.h"
 #include "sampleSchema_generated.h"
@@ -140,44 +142,83 @@ ProviderNodeAllData::ProviderNodeAllData(comm::datalayer::IProvider3* provider, 
   m_metadata = createMetadata(comm::datalayer::Variant(), m_addressBase);
 }
 
-void ProviderNodeAllData::updateData(int64_t offset, uint64_t edge, uint64_t observer)
+void ProviderNodeAllData::updateData(int64_t offset100ns, uint64_t edge, uint64_t observer)
 {
-	
     std::lock_guard<std::mutex> lock(m_dataMutex);
 
-	auto* offsetContainer = getDataContainer(m_addressBase + "offset");
-	auto* edgeContainer = getDataContainer(m_addressBase + "edgetimestamp");
-	auto* obsContainer = getDataContainer(m_addressBase + "observertimestamp");
-	auto* fbContainer = getDataContainer(m_addressBase + "value");
+    auto* offsetMsContainer = getDataContainer(m_addressBase + "offset_ms");
+    auto* offsetDurationContainer = getDataContainer(m_addressBase + "offset_duration");
+    auto* edgeContainer = getDataContainer(m_addressBase + "edgetimestamp");
+    auto* obsContainer = getDataContainer(m_addressBase + "observertimestamp");
+    auto* fbContainer = getDataContainer(m_addressBase + "value");
 
-	// --- update scalars first ---
-	if (offsetContainer) {
-		comm::datalayer::Variant v;
-		v.setValue(offset);
-		offsetContainer->m_data = v;
-	}
+    int64_t offsetMs = offset100ns / 10000;
+    int64_t absOffsetMs = offsetMs < 0 ? -offsetMs : offsetMs;
+    int64_t hours = absOffsetMs / 3600000;
+    int64_t minutes = (absOffsetMs % 3600000) / 60000;
+    int64_t seconds = (absOffsetMs % 60000) / 1000;
+    int64_t millis = absOffsetMs % 1000;
 
-	if (edgeContainer) {
-		comm::datalayer::Variant v;
-		v.setTimestamp(edge);
-		edgeContainer->m_data = v;
-	}
+    std::ostringstream durationStream;
+    if (offsetMs < 0) {
+        durationStream << "-";
+    }
+    if (hours > 0) {
+        durationStream << hours << "h";
+    }
+    if (minutes > 0 || hours > 0) {
+        durationStream << minutes << "m";
+    }
+    if (seconds > 0 || minutes > 0 || hours > 0) {
+        durationStream << seconds;
+        if (millis != 0) {
+            durationStream << "." << std::setw(3) << std::setfill('0') << millis;
+        }
+        durationStream << "s";
+    }
+    else if (millis != 0) {
+        durationStream << millis << "ms";
+    }
+    else {
+        durationStream << "0ms";
+    }
 
-	if (obsContainer) {
-		comm::datalayer::Variant v;
-		v.setTimestamp(observer);
-		obsContainer->m_data = v;
-	}
+    std::string offsetDuration = durationStream.str();
 
-	// --- update flatbuffer LAST ---
-	if (fbContainer) {
-		flatbuffers::FlatBufferBuilder builder;
-		auto fb = sample::schema::CreateTimeObserver(builder, offset, edge, observer);
-		builder.Finish(fb);
-		fbContainer->m_data.shareFlatbuffers(builder);
-	}
-	
-	// Note: Notification of changes would be sent here if the API supported it
+    // --- update scalars first ---
+    if (offsetMsContainer) {
+        comm::datalayer::Variant v;
+        v.setValue(offsetMs);
+        offsetMsContainer->m_data = v;
+    }
+
+    if (offsetDurationContainer) {
+        comm::datalayer::Variant v;
+        v.setValue(offsetDuration);
+        offsetDurationContainer->m_data = v;
+    }
+
+    if (edgeContainer) {
+        comm::datalayer::Variant v;
+        v.setTimestamp(edge);
+        edgeContainer->m_data = v;
+    }
+
+    if (obsContainer) {
+        comm::datalayer::Variant v;
+        v.setTimestamp(observer);
+        obsContainer->m_data = v;
+    }
+
+    // --- update flatbuffer LAST ---
+    if (fbContainer) {
+        flatbuffers::FlatBufferBuilder builder;
+        auto fb = sample::schema::CreateTimeObserver(builder, offset100ns, edge, observer);
+        builder.Finish(fb);
+        fbContainer->m_data.shareFlatbuffers(builder);
+    }
+
+    // Note: Notification of changes would be sent here if the API supported it
 }
 
 
@@ -201,10 +242,15 @@ void ProviderNodeAllData::registerNodes()
     // --- Get current system timestamp in FILETIME 100ns units ---
     uint64_t currentTime = getCurrentTimestampFiletime();
 
-    // --- offset ---
+    // --- offset in milliseconds ---
     data = comm::datalayer::Variant();
-    result = data.setValue((uint64_t)0);
-    createDataContainer(result, "offset", data);
+    result = data.setValue((int64_t)0);
+    createDataContainer(result, "offset_ms", data);
+
+    // --- offset duration ---
+    data = comm::datalayer::Variant();
+    result = data.setValue(std::string("0ms"));
+    createDataContainer(result, "offset_duration", data);
 
     // --- observer timestamp ---
     data = comm::datalayer::Variant();
@@ -219,7 +265,7 @@ void ProviderNodeAllData::registerNodes()
     // --- flatbuffer ---
     flatbuffers::FlatBufferBuilder builder;
 
-    uint64_t offset = 0;
+    int64_t offset = 0;
     uint64_t edge = currentTime;
     uint64_t observer = currentTime;
 
@@ -231,7 +277,6 @@ void ProviderNodeAllData::registerNodes()
 
     createDataContainer(result, "value", data);
 }
-
 // This function will be called whenever a object should be created.
 void ProviderNodeAllData::onCreate(
   const std::string& address,
