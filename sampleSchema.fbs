@@ -3,7 +3,7 @@
 namespace sample.schema;
 
 table TimeObserver {
-    offset: uint64;
+    offset: int64;
     edgetimestamp: uint64;
     observertimestamp: uint64;
 }

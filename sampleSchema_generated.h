@@ -22,7 +22,7 @@ struct TimeObserverT;
 
 struct TimeObserverT : public ::flatbuffers::NativeTable {
   typedef TimeObserver TableType;
-  uint64_t offset = 0;
+  int64_t offset = 0;
   uint64_t edgetimestamp = 0;
   uint64_t observertimestamp = 0;
 };
@@ -35,8 +35,8 @@ struct TimeObserver FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
     VT_EDGETIMESTAMP = 6,
     VT_OBSERVERTIMESTAMP = 8
   };
-  uint64_t offset() const {
-    return GetField<uint64_t>(VT_OFFSET, 0);
+  int64_t offset() const {
+    return GetField<int64_t>(VT_OFFSET, 0);
   }
   uint64_t edgetimestamp() const {
     return GetField<uint64_t>(VT_EDGETIMESTAMP, 0);
@@ -46,7 +46,7 @@ struct TimeObserver FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   }
   bool Verify(::flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
-           VerifyField<uint64_t>(verifier, VT_OFFSET, 8) &&
+           VerifyField<int64_t>(verifier, VT_OFFSET, 8) &&
            VerifyField<uint64_t>(verifier, VT_EDGETIMESTAMP, 8) &&
            VerifyField<uint64_t>(verifier, VT_OBSERVERTIMESTAMP, 8) &&
            verifier.EndTable();
@@ -60,8 +60,8 @@ struct TimeObserverBuilder {
   typedef TimeObserver Table;
   ::flatbuffers::FlatBufferBuilder &fbb_;
   ::flatbuffers::uoffset_t start_;
-  void add_offset(uint64_t offset) {
-    fbb_.AddElement<uint64_t>(TimeObserver::VT_OFFSET, offset, 0);
+  void add_offset(int64_t offset) {
+    fbb_.AddElement<int64_t>(TimeObserver::VT_OFFSET, offset, 0);
   }
   void add_edgetimestamp(uint64_t edgetimestamp) {
     fbb_.AddElement<uint64_t>(TimeObserver::VT_EDGETIMESTAMP, edgetimestamp, 0);
@@ -82,7 +82,7 @@ struct TimeObserverBuilder {
 
 inline ::flatbuffers::Offset<TimeObserver> CreateTimeObserver(
     ::flatbuffers::FlatBufferBuilder &_fbb,
-    uint64_t offset = 0,
+    int64_t offset = 0,
     uint64_t edgetimestamp = 0,
     uint64_t observertimestamp = 0) {
   TimeObserverBuilder builder_(_fbb);

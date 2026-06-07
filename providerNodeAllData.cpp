@@ -140,7 +140,7 @@ ProviderNodeAllData::ProviderNodeAllData(comm::datalayer::IProvider3* provider, 
   m_metadata = createMetadata(comm::datalayer::Variant(), m_addressBase);
 }
 
-void ProviderNodeAllData::updateData(uint64_t offset, uint64_t edge, uint64_t observer)
+void ProviderNodeAllData::updateData(int64_t offset, uint64_t edge, uint64_t observer)
 {
 	
     std::lock_guard<std::mutex> lock(m_dataMutex);
