@@ -7,6 +7,7 @@
 #include <csignal>
 #include <thread>
 #include <string>
+#include <chrono>
 
 #include "ctrlx_datalayer_helper.h"
 #include "providerNodeAllData.h"
@@ -21,6 +22,16 @@ static void signalHandler(int signal)
 {
   std::cout << "signal: " << signal << std::endl;
   g_endProcess = true;
+}
+
+static uint64_t getCurrentTimestampFiletime()
+{
+  using namespace std::chrono;
+  constexpr uint64_t EPOCH_DIFF_100NS = 116444736000000000ULL;
+  auto now = system_clock::now();
+  auto since_epoch = now.time_since_epoch();
+  auto ticks100ns = duration_cast<duration<uint64_t, std::ratio<1, 10000000>>>(since_epoch).count();
+  return ticks100ns + EPOCH_DIFF_100NS;
 }
 
 int main(void)
@@ -68,11 +79,9 @@ int main(void)
     std::cout << "INFO Running endless loop - will be ended on connection error or user input of Ctrl+C" << std::endl;
 	while (g_endProcess == false && provider->isConnected())
 	{
-		uint64_t t = std::chrono::duration_cast<std::chrono::nanoseconds>(
-			std::chrono::system_clock::now().time_since_epoch()
-		).count();
+		uint64_t t = getCurrentTimestampFiletime();
 
-		providerNodeStatic->updateData(t, t + 1, t + 2);
+		providerNodeStatic->updateData(0, t, t);
 
 		std::this_thread::sleep_for(std::chrono::seconds(10));
 	}

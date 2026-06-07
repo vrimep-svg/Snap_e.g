@@ -5,10 +5,21 @@
  */
 
 #include <string>
+#include <chrono>
 
 #include "providerNodeAllData.h"
 #include "sampleSchema_generated.h"
 #include "ctrlx_datalayer_helper.h"
+
+static uint64_t getCurrentTimestampFiletime()
+{
+  using namespace std::chrono;
+  constexpr uint64_t EPOCH_DIFF_100NS = 116444736000000000ULL;
+  auto now = system_clock::now();
+  auto since_epoch = now.time_since_epoch();
+  auto ticks100ns = duration_cast<duration<uint64_t, std::ratio<1, 10000000>>>(since_epoch).count();
+  return ticks100ns + EPOCH_DIFF_100NS;
+}
 
 DataContainer* ProviderNodeAllData::getDataContainer(const std::string& address)
 {
@@ -187,6 +198,9 @@ void ProviderNodeAllData::registerNodes()
         return;
     }
 
+    // --- Get current system timestamp in FILETIME 100ns units ---
+    uint64_t currentTime = getCurrentTimestampFiletime();
+
     // --- offset ---
     data = comm::datalayer::Variant();
     result = data.setValue((uint64_t)0);
@@ -194,21 +208,20 @@ void ProviderNodeAllData::registerNodes()
 
     // --- observer timestamp ---
     data = comm::datalayer::Variant();
-	uint64_t initialTs = 116444736000000000ULL;
-    result = data.setTimestamp(initialTs);
+    result = data.setTimestamp(currentTime);
     createDataContainer(result, "observertimestamp", data);
 
     // --- edge timestamp ---
     data = comm::datalayer::Variant();
-    result = data.setTimestamp(initialTs);
+    result = data.setTimestamp(currentTime);
     createDataContainer(result, "edgetimestamp", data);
 
     // --- flatbuffer ---
     flatbuffers::FlatBufferBuilder builder;
 
-    uint64_t offset = 1;
-    uint64_t edge = 2;
-    uint64_t observer = 3;
+    uint64_t offset = 0;
+    uint64_t edge = currentTime;
+    uint64_t observer = currentTime;
 
     auto fb = sample::schema::CreateTimeObserver(builder, offset, edge, observer);
     builder.Finish(fb);
