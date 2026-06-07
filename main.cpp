@@ -63,12 +63,19 @@ int main(void)
     auto providerNodeStatic = new ProviderNodeAllData(provider, g_dataLayerAddrBase, false);
     providerNodeStatic->registerNodes();
 
+
     // Inner loop
     std::cout << "INFO Running endless loop - will be ended on connection error or user input of Ctrl+C" << std::endl;
-    while (g_endProcess == false && provider->isConnected())
-    {
-      std::this_thread::sleep_for(std::chrono::seconds(10));
-    }
+	while (g_endProcess == false && provider->isConnected())
+	{
+		uint64_t t = std::chrono::duration_cast<std::chrono::nanoseconds>(
+			std::chrono::system_clock::now().time_since_epoch()
+		).count();
+
+		providerNodeStatic->updateData(t, t + 1, t + 2);
+
+		std::this_thread::sleep_for(std::chrono::seconds(10));
+	}
 
     delete providerNodeStatic;
 

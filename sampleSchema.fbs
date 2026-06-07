@@ -2,11 +2,10 @@
 
 namespace sample.schema;
 
-
-table InertialValue {
-    x:short;
-    y:short;
-    z:short;
+table TimeObserver {
+    offset: uint64;
+    edgetimestamp: uint64;
+    observertimestamp: uint64;
 }
 
-root_type InertialValue;
+root_type TimeObserver;

@@ -129,19 +129,105 @@ ProviderNodeAllData::ProviderNodeAllData(comm::datalayer::IProvider3* provider, 
   m_metadata = createMetadata(comm::datalayer::Variant(), m_addressBase);
 }
 
+void ProviderNodeAllData::updateData(uint64_t offset, uint64_t edge, uint64_t observer)
+{
+	
+    std::lock_guard<std::mutex> lock(m_dataMutex);
+
+	auto* offsetContainer = getDataContainer(m_addressBase + "offset");
+	auto* edgeContainer = getDataContainer(m_addressBase + "edgetimestamp");
+	auto* obsContainer = getDataContainer(m_addressBase + "observertimestamp");
+	auto* fbContainer = getDataContainer(m_addressBase + "value");
+
+	// --- update scalars first ---
+	if (offsetContainer) {
+		comm::datalayer::Variant v;
+		v.setValue(offset);
+		offsetContainer->m_data = v;
+	}
+
+	if (edgeContainer) {
+		comm::datalayer::Variant v;
+		v.setTimestamp(edge);
+		edgeContainer->m_data = v;
+	}
+
+	if (obsContainer) {
+		comm::datalayer::Variant v;
+		v.setTimestamp(observer);
+		obsContainer->m_data = v;
+	}
+
+	// --- update flatbuffer LAST ---
+	if (fbContainer) {
+		flatbuffers::FlatBufferBuilder builder;
+		auto fb = sample::schema::CreateTimeObserver(builder, offset, edge, observer);
+		builder.Finish(fb);
+		fbContainer->m_data.shareFlatbuffers(builder);
+	}
+	
+	//Only notify if container exists:
+	if (offsetContainer)
+		m_provider->notifyNodeChanged(m_addressBase + "offset");
+
+	if (edgeContainer)
+		m_provider->notifyNodeChanged(m_addressBase + "edgetimestamp");
+
+	if (obsContainer)
+		m_provider->notifyNodeChanged(m_addressBase + "observertimestamp");
+
+	if (fbContainer)
+		m_provider->notifyNodeChanged(m_addressBase + "value");
+}
+
+
 void ProviderNodeAllData::registerNodes()
 {
-  comm::datalayer::DlResult result;
-  result = m_provider->registerNode(m_addressBase + "**", this);
-  std::cout << "registerNodes: " << result.toString() << std::endl;
-  comm::datalayer::Variant data;
+    comm::datalayer::DlResult result;
+    comm::datalayer::Variant data;
 
-  result = data.setValue(0.0);
-  createDataContainer(result, "Offset", data);
-  result = data.setTimestamp(116444736000000000);
-  createDataContainer(result, "ObservedTimestamp", data);
-  result = data.setTimestamp(116444736000000000);
-  createDataContainer(result, "EdgeTimestamp", data);
+    // --- Register flatbuffer type first ---
+    std::string bfbs = isSnap()
+        ? std::string(snapPath()).append("/sampleSchema.bfbs")
+        : "bfbs/sampleSchema.bfbs";
+
+    result = m_provider->registerType(m_typeInertialValue, bfbs);
+    if (result != comm::datalayer::DlResult::DL_OK)
+    {
+        std::cout << "ERROR registerType()" << std::endl;
+        return;
+    }
+
+    // --- offset ---
+    data.reset();
+    result = data.setValue((uint64_t)0);
+    createDataContainer(result, "offset", data);
+
+    // --- observer timestamp ---
+    data.reset();
+	uint64_t initialTs = 116444736000000000ULL;
+    result = data.setTimestamp(initialTs);
+    createDataContainer(result, "observertimestamp", data);
+
+    // --- edge timestamp ---
+    data.reset();
+    result = data.setTimestamp(initialTs);
+    createDataContainer(result, "edgetimestamp", data);
+
+    // --- flatbuffer ---
+    flatbuffers::FlatBufferBuilder builder;
+
+    uint64_t offset = 1;
+    uint64_t edge = 2;
+    uint64_t observer = 3;
+
+    auto fb = sample::schema::CreateTimeObserver(builder, offset, edge, observer);
+    builder.Finish(fb);
+
+    data.reset();
+    result = data.shareFlatbuffers(builder);
+
+    createDataContainer(result, "value", data);
 }
 
 // This function will be called whenever a object should be created.
@@ -175,23 +261,23 @@ void ProviderNodeAllData::onRead(
   const comm::datalayer::Variant* data,
   const comm::datalayer::IProviderNode::ResponseCallback& callback)
 {
-  comm::datalayer::DlResult result;
+  std::lock_guard<std::mutex> lock(m_dataMutex);
 
   auto dataContainer = getDataContainer(address);
   if (nullptr == dataContainer)
   {
-    result = comm::datalayer::DlResult::DL_INVALID_ADDRESS;
-    //std::cout << "onRead(): " << address << " " << result.toString() << std::endl;
-    callback(result, nullptr);
+    callback(comm::datalayer::DlResult::DL_INVALID_ADDRESS, nullptr);
     return;
   }
 
-  comm::datalayer::Variant myData = dataContainer->m_data;
-  result = dataContainer->m_errorCode >= 0 ? comm::datalayer::DlResult::DL_OK : comm::datalayer::DlResult::DL_INVALID_VALUE;
-  //std::cout << "onRead(): " << address << " " << result.toString() << std::endl;
+  auto result = dataContainer->m_errorCode >= 0
+        ? comm::datalayer::DlResult::DL_OK
+        : comm::datalayer::DlResult::DL_INVALID_VALUE;
 
-  callback(result, &myData);
+  //  FIXED: no temporary
+  callback(result, &dataContainer->m_data);
 }
+
 
 // Write function of a node. Function will be called whenever a node should be written.
 void ProviderNodeAllData::onWrite(

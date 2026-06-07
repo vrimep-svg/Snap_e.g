@@ -63,7 +63,6 @@ ELSE()
   add_custom_target(PrintMessage ALL COMMAND ${CMAKE_COMMAND} -E echo Ricardo_Was_here!)
 ENDIF()
 
-
 #
 # set source files for each executable
 #
@@ -117,7 +116,6 @@ target_link_libraries(${TARGET_PROJECT_NAME}
   libcomm_datalayer.so
   pthread
   systemd
-  zmq
   ssl
   crypto
 )
@@ -156,8 +154,8 @@ COMMAND make install
 if (BUILD_SNAP)
   add_custom_command( TARGET ${TARGET_PROJECT_NAME}
     POST_BUILD
-    COMMAND sudo snapcraft clean
-    COMMAND sudo snapcraft --build-for=${SNAP_ARCH} --verbosity=verbose
+    # COMMAND snapcraft clean
+    COMMAND snapcraft pack --build-for=${SNAP_ARCH} --verbosity=verbose
     WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
   )
 endif(BUILD_SNAP)

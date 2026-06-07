@@ -21,6 +21,9 @@
 
 #include "dataContainer.h"
 
+#include <mutex>
+
+
  /*
    ProviderNodeAllData
    This class implements the IProviderNode interface and provides an 'all-data' ctrlX Data Layer sub branch.
@@ -51,8 +54,8 @@ protected:
   std::string m_addressBase;
 
   // Path of the inertial value type
-  std::string m_typeInertialValue = "types/sdk/cpp/provider/alldata/inertialValue";
-
+  std::string m_typeInertialValue = "types/sample/TimeObserver";
+  
   // Metadata for the providerNode
   comm::datalayer::Variant m_metadata;
 
