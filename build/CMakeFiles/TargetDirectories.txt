@@ -1,0 +1,8 @@
+/home/ricardo/ctrlX/ctrlx-automation-sdk/samples-cpp/TimeObserver/build/CMakeFiles/PrintMessage.dir
+/home/ricardo/ctrlX/ctrlx-automation-sdk/samples-cpp/TimeObserver/build/CMakeFiles/allDataProvider.dir
+/home/ricardo/ctrlX/ctrlx-automation-sdk/samples-cpp/TimeObserver/build/CMakeFiles/edit_cache.dir
+/home/ricardo/ctrlX/ctrlx-automation-sdk/samples-cpp/TimeObserver/build/CMakeFiles/rebuild_cache.dir
+/home/ricardo/ctrlX/ctrlx-automation-sdk/samples-cpp/TimeObserver/build/CMakeFiles/list_install_components.dir
+/home/ricardo/ctrlX/ctrlx-automation-sdk/samples-cpp/TimeObserver/build/CMakeFiles/install.dir
+/home/ricardo/ctrlX/ctrlx-automation-sdk/samples-cpp/TimeObserver/build/CMakeFiles/install/local.dir
+/home/ricardo/ctrlX/ctrlx-automation-sdk/samples-cpp/TimeObserver/build/CMakeFiles/install/strip.dir

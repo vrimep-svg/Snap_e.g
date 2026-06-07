@@ -1,0 +1,49 @@
+files: !!set
+  sampleSchema.bfbs: null
+directories: !!set {}
+part-properties:
+  plugin: dump
+  source: ./bfbs
+  source-checksum: ''
+  source-branch: ''
+  source-commit: ''
+  source-depth: 0
+  source-subdir: ''
+  source-submodules: null
+  source-tag: ''
+  source-type: ''
+  disable-parallel: false
+  after: []
+  overlay-packages: []
+  stage-snaps: []
+  stage-packages: []
+  build-snaps: []
+  build-packages: []
+  build-environment: []
+  build-attributes: []
+  organize: {}
+  overlay:
+  - '*'
+  stage:
+  - '*'
+  prime:
+  - '*'
+  override-pull: null
+  overlay-script: null
+  override-build: null
+  override-stage: null
+  override-prime: null
+  permissions: []
+project-options:
+  application_name: snapcraft
+  arch_triplet: aarch64-linux-gnu
+  target_arch: arm64
+  project_vars_part_name: null
+  project_vars:
+    version:
+      value: 1.0.1
+      updated: false
+    grade:
+      value: devel
+      updated: false
+overlay-hash: 8d9f437db97f7276a2d68fc44683b6761035f73c

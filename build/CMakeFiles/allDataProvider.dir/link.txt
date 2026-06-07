@@ -1,0 +1,1 @@
+aarch64-linux-gnu-g++-12  -fno-rtti -fPIC -Wl,--dependency-file=CMakeFiles/allDataProvider.dir/link.d CMakeFiles/allDataProvider.dir/main.cpp.o CMakeFiles/allDataProvider.dir/providerNodeAllData.cpp.o -o allDataProvider  -Wl,--no-undefined -lcomm_datalayer -lpthread -lsystemd -lzmq -lssl -lcrypto

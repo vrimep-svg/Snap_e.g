@@ -1,0 +1,60 @@
+# Getting started
+# See https://snapcraft.io/docs/getting-started
+# Snapcraft references
+# See https://snapcraft.io/docs/snapcraft-yaml-reference
+
+name: sdk-cpp-timeobserver
+title: SDK C++ Time Observer
+version: 1.0.1
+grade: devel
+summary: Application that measures the time offset between Layer1 and Layer0
+description: |
+  Time Observer provides continuous visibility into the time relationship between Layer 1 and Layer 0 without influencing system time synchronization. 
+  The application operates as an independent NTP client, querying a plant-local time server and comparing the received time with the edge system clock (which is synchronized with the edge router).
+  Using standard NTP timestamp exchange, it computes the offset between both domains and exposes this information in the data layer.
+  
+base: core22
+confinement: strict
+
+architectures:
+  - build-on: [amd64, arm64]
+    build-for: [amd64]
+  - build-on: [amd64, arm64]
+    build-for: [arm64]
+
+# We have one app only
+apps:
+  app:
+    command: allDataProvider
+    # interfaces to connect to https://snapcraft.io/docs/supported-interfaces
+    plugs:
+      - network
+      - datalayer
+    daemon: simple
+    restart-condition: always
+    passthrough:
+      restart-delay: 10s
+
+parts:
+  app:
+    plugin: dump
+    source: ./generated/build
+    stage-packages:
+      - ctrlx-datalayer
+
+  flatbuffers:
+    plugin: dump
+    source: ./bfbs
+
+# describes which interface slots are supported by defining the plugs
+plugs:
+  datalayer:
+    interface: content
+    content: datalayer
+    target: $SNAP_DATA/.datalayer
+
+lint:
+  ignore:
+    - library:
+      - usr/lib/aarch64-linux-gnu/libcomm_datalayer.so.*
+      - usr/lib/x86_64-linux-gnu/libcomm_datalayer.so.*

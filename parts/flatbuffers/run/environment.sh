@@ -1,0 +1,33 @@
+# Environment
+## Application environment
+export SNAPCRAFT_ARCH_TRIPLET="aarch64-linux-gnu"
+export SNAPCRAFT_TARGET_ARCH="arm64"
+export SNAPCRAFT_PARALLEL_BUILD_COUNT="8"
+export SNAPCRAFT_PROJECT_VERSION="1.0.1"
+export SNAPCRAFT_PROJECT_GRADE="devel"
+export SNAPCRAFT_PROJECT_DIR="/home/ricardo/ctrlX/ctrlx-automation-sdk/samples-cpp/TimeObserver"
+export SNAPCRAFT_PROJECT_NAME="sdk-cpp-timeobserver"
+export SNAPCRAFT_STAGE="/home/ricardo/ctrlX/ctrlx-automation-sdk/samples-cpp/TimeObserver/stage"
+export SNAPCRAFT_PRIME="/home/ricardo/ctrlX/ctrlx-automation-sdk/samples-cpp/TimeObserver/prime"
+export SNAPCRAFT_PART_SRC="/home/ricardo/ctrlX/ctrlx-automation-sdk/samples-cpp/TimeObserver/parts/flatbuffers/src"
+export SNAPCRAFT_PART_SRC_WORK="/home/ricardo/ctrlX/ctrlx-automation-sdk/samples-cpp/TimeObserver/parts/flatbuffers/src"
+export SNAPCRAFT_PART_BUILD="/home/ricardo/ctrlX/ctrlx-automation-sdk/samples-cpp/TimeObserver/parts/flatbuffers/build"
+export SNAPCRAFT_PART_BUILD_WORK="/home/ricardo/ctrlX/ctrlx-automation-sdk/samples-cpp/TimeObserver/parts/flatbuffers/build"
+export SNAPCRAFT_PART_INSTALL="/home/ricardo/ctrlX/ctrlx-automation-sdk/samples-cpp/TimeObserver/parts/flatbuffers/install"
+## Part environment
+export CRAFT_ARCH_TRIPLET="aarch64-linux-gnu"
+export CRAFT_TARGET_ARCH="arm64"
+export CRAFT_PARALLEL_BUILD_COUNT="8"
+export CRAFT_PROJECT_DIR="/home/ricardo/ctrlX/ctrlx-automation-sdk/samples-cpp/TimeObserver"
+export CRAFT_STAGE="/home/ricardo/ctrlX/ctrlx-automation-sdk/samples-cpp/TimeObserver/stage"
+export CRAFT_PRIME="/home/ricardo/ctrlX/ctrlx-automation-sdk/samples-cpp/TimeObserver/prime"
+export CRAFT_PROJECT_NAME="sdk-cpp-timeobserver"
+export CRAFT_PART_NAME="flatbuffers"
+export CRAFT_STEP_NAME="BUILD"
+export CRAFT_PART_SRC="/home/ricardo/ctrlX/ctrlx-automation-sdk/samples-cpp/TimeObserver/parts/flatbuffers/src"
+export CRAFT_PART_SRC_WORK="/home/ricardo/ctrlX/ctrlx-automation-sdk/samples-cpp/TimeObserver/parts/flatbuffers/src"
+export CRAFT_PART_BUILD="/home/ricardo/ctrlX/ctrlx-automation-sdk/samples-cpp/TimeObserver/parts/flatbuffers/build"
+export CRAFT_PART_BUILD_WORK="/home/ricardo/ctrlX/ctrlx-automation-sdk/samples-cpp/TimeObserver/parts/flatbuffers/build"
+export CRAFT_PART_INSTALL="/home/ricardo/ctrlX/ctrlx-automation-sdk/samples-cpp/TimeObserver/parts/flatbuffers/install"
+## Plugin environment
+## User environment
