@@ -1,7 +1,0 @@
-{
-	"InstallScripts" : 
-	[
-		"/home/ricardo/ctrlX/ctrlx-automation-sdk/samples-cpp/TimeObserver/build/cmake_install.cmake"
-	],
-	"Parallel" : false
-}

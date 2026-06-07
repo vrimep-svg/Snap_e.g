@@ -1,2 +1,0 @@
-/home/ricardo/ctrlX/ctrlx-automation-sdk/samples-cpp/TimeObserver/generated/ubuntu22-gcc-aarch64/allDataProvider
-/home/ricardo/ctrlX/ctrlx-automation-sdk/samples-cpp/TimeObserver/generated/build/allDataProvider
