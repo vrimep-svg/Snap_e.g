@@ -1,0 +1,75 @@
+~/ctrlX/ctrlx-automation-sdk/samples-cpp/TimeObserver/build ~/ctrlX/ctrlx-automation-sdk/samples-cpp/TimeObserver
+CMake Deprecation Warning at CMakeLists.txt:4 (cmake_minimum_required):
+  Compatibility with CMake < 3.10 will be removed from a future version of
+  CMake.
+
+  Update the VERSION argument <min> value.  Or, use the <min>...<max> syntax
+  to tell CMake that the project requires at least <min> but has been updated
+  to work with policies introduced by <max> or earlier.
+
+
+-- The C compiler identification is GNU 15.2.0
+-- The CXX compiler identification is GNU 15.2.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Generating flatbuffers files --
+Set executable permission for flatc
+Compile flatbuffers cpp classes
+Compile flatbuffers binary schema file (*.bfbs)
+-- Selected BuildKit: GCC aarch64-linux-gnu
+-- ######################################
+-- Option: BUILD_SNAP ON
+-- ######################################
+-- --- CRITICAL CONFIRMATION: USING ARM64 CROSS-COMPILER ---
+-- Libraries directory: 
+-- Configuring done (0.4s)
+-- Generating done (0.0s)
+-- Build files have been written to: /home/ricardo/ctrlX/ctrlx-automation-sdk/samples-cpp/TimeObserver/build
+Ricardo_Was_here!
+[  0%] Built target PrintMessage
+[ 33%] Building CXX object CMakeFiles/allDataProvider.dir/main.cpp.o
+[ 66%] Building CXX object CMakeFiles/allDataProvider.dir/providerNodeAllData.cpp.o
+/home/ricardo/ctrlX/ctrlx-automation-sdk/samples-cpp/TimeObserver/providerNodeAllData.cpp: In member function ‘void ProviderNodeAllData::updateData(uint64_t, uint64_t, uint64_t)’:
+/home/ricardo/ctrlX/ctrlx-automation-sdk/samples-cpp/TimeObserver/providerNodeAllData.cpp:135:38: error: ‘m_dataMutex’ was not declared in this scope
+  135 |     std::lock_guard<std::mutex> lock(m_dataMutex);
+      |                                      ^~~~~~~~~~~
+/home/ricardo/ctrlX/ctrlx-automation-sdk/samples-cpp/TimeObserver/providerNodeAllData.cpp:171:29: error: ‘class comm::datalayer::IProvider3’ has no member named ‘notifyNodeChanged’
+  171 |                 m_provider->notifyNodeChanged(m_addressBase + "offset");
+      |                             ^~~~~~~~~~~~~~~~~
+/home/ricardo/ctrlX/ctrlx-automation-sdk/samples-cpp/TimeObserver/providerNodeAllData.cpp:174:29: error: ‘class comm::datalayer::IProvider3’ has no member named ‘notifyNodeChanged’
+  174 |                 m_provider->notifyNodeChanged(m_addressBase + "edgetimestamp");
+      |                             ^~~~~~~~~~~~~~~~~
+/home/ricardo/ctrlX/ctrlx-automation-sdk/samples-cpp/TimeObserver/providerNodeAllData.cpp:177:29: error: ‘class comm::datalayer::IProvider3’ has no member named ‘notifyNodeChanged’
+  177 |                 m_provider->notifyNodeChanged(m_addressBase + "observertimestamp");
+      |                             ^~~~~~~~~~~~~~~~~
+/home/ricardo/ctrlX/ctrlx-automation-sdk/samples-cpp/TimeObserver/providerNodeAllData.cpp:180:29: error: ‘class comm::datalayer::IProvider3’ has no member named ‘notifyNodeChanged’
+  180 |                 m_provider->notifyNodeChanged(m_addressBase + "value");
+      |                             ^~~~~~~~~~~~~~~~~
+/home/ricardo/ctrlX/ctrlx-automation-sdk/samples-cpp/TimeObserver/providerNodeAllData.cpp: In member function ‘void ProviderNodeAllData::registerNodes()’:
+/home/ricardo/ctrlX/ctrlx-automation-sdk/samples-cpp/TimeObserver/providerNodeAllData.cpp:202:10: error: ‘class comm::datalayer::Variant’ has no member named ‘reset’
+  202 |     data.reset();
+      |          ^~~~~
+/home/ricardo/ctrlX/ctrlx-automation-sdk/samples-cpp/TimeObserver/providerNodeAllData.cpp:207:10: error: ‘class comm::datalayer::Variant’ has no member named ‘reset’
+  207 |     data.reset();
+      |          ^~~~~
+/home/ricardo/ctrlX/ctrlx-automation-sdk/samples-cpp/TimeObserver/providerNodeAllData.cpp:213:10: error: ‘class comm::datalayer::Variant’ has no member named ‘reset’
+  213 |     data.reset();
+      |          ^~~~~
+/home/ricardo/ctrlX/ctrlx-automation-sdk/samples-cpp/TimeObserver/providerNodeAllData.cpp:227:10: error: ‘class comm::datalayer::Variant’ has no member named ‘reset’
+  227 |     data.reset();
+      |          ^~~~~
+/home/ricardo/ctrlX/ctrlx-automation-sdk/samples-cpp/TimeObserver/providerNodeAllData.cpp: In member function ‘virtual void ProviderNodeAllData::onRead(const std::string&, const comm::datalayer::Variant*, const comm::datalayer::IProviderNode::ResponseCallback&)’:
+/home/ricardo/ctrlX/ctrlx-automation-sdk/samples-cpp/TimeObserver/providerNodeAllData.cpp:264:36: error: ‘m_dataMutex’ was not declared in this scope
+  264 |   std::lock_guard<std::mutex> lock(m_dataMutex);
+      |                                    ^~~~~~~~~~~
+make[2]: *** [CMakeFiles/allDataProvider.dir/build.make:93: CMakeFiles/allDataProvider.dir/providerNodeAllData.cpp.o] Error 1
+make[1]: *** [CMakeFiles/Makefile2:122: CMakeFiles/allDataProvider.dir/all] Error 2
+make: *** [Makefile:136: all] Error 2

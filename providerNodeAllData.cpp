@@ -166,18 +166,7 @@ void ProviderNodeAllData::updateData(uint64_t offset, uint64_t edge, uint64_t ob
 		fbContainer->m_data.shareFlatbuffers(builder);
 	}
 	
-	//Only notify if container exists:
-	if (offsetContainer)
-		m_provider->notifyNodeChanged(m_addressBase + "offset");
-
-	if (edgeContainer)
-		m_provider->notifyNodeChanged(m_addressBase + "edgetimestamp");
-
-	if (obsContainer)
-		m_provider->notifyNodeChanged(m_addressBase + "observertimestamp");
-
-	if (fbContainer)
-		m_provider->notifyNodeChanged(m_addressBase + "value");
+	// Note: Notification of changes would be sent here if the API supported it
 }
 
 
@@ -199,18 +188,18 @@ void ProviderNodeAllData::registerNodes()
     }
 
     // --- offset ---
-    data.reset();
+    data = comm::datalayer::Variant();
     result = data.setValue((uint64_t)0);
     createDataContainer(result, "offset", data);
 
     // --- observer timestamp ---
-    data.reset();
+    data = comm::datalayer::Variant();
 	uint64_t initialTs = 116444736000000000ULL;
     result = data.setTimestamp(initialTs);
     createDataContainer(result, "observertimestamp", data);
 
     // --- edge timestamp ---
-    data.reset();
+    data = comm::datalayer::Variant();
     result = data.setTimestamp(initialTs);
     createDataContainer(result, "edgetimestamp", data);
 
@@ -224,7 +213,7 @@ void ProviderNodeAllData::registerNodes()
     auto fb = sample::schema::CreateTimeObserver(builder, offset, edge, observer);
     builder.Finish(fb);
 
-    data.reset();
+    data = comm::datalayer::Variant();
     result = data.shareFlatbuffers(builder);
 
     createDataContainer(result, "value", data);

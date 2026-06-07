@@ -16,160 +16,160 @@ static_assert(FLATBUFFERS_VERSION_MAJOR == 23 &&
 namespace sample {
 namespace schema {
 
-struct InertialValue;
-struct InertialValueBuilder;
-struct InertialValueT;
+struct TimeObserver;
+struct TimeObserverBuilder;
+struct TimeObserverT;
 
-struct InertialValueT : public ::flatbuffers::NativeTable {
-  typedef InertialValue TableType;
-  int16_t x = 0;
-  int16_t y = 0;
-  int16_t z = 0;
+struct TimeObserverT : public ::flatbuffers::NativeTable {
+  typedef TimeObserver TableType;
+  uint64_t offset = 0;
+  uint64_t edgetimestamp = 0;
+  uint64_t observertimestamp = 0;
 };
 
-struct InertialValue FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
-  typedef InertialValueT NativeTableType;
-  typedef InertialValueBuilder Builder;
+struct TimeObserver FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef TimeObserverT NativeTableType;
+  typedef TimeObserverBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
-    VT_X = 4,
-    VT_Y = 6,
-    VT_Z = 8
+    VT_OFFSET = 4,
+    VT_EDGETIMESTAMP = 6,
+    VT_OBSERVERTIMESTAMP = 8
   };
-  int16_t x() const {
-    return GetField<int16_t>(VT_X, 0);
+  uint64_t offset() const {
+    return GetField<uint64_t>(VT_OFFSET, 0);
   }
-  int16_t y() const {
-    return GetField<int16_t>(VT_Y, 0);
+  uint64_t edgetimestamp() const {
+    return GetField<uint64_t>(VT_EDGETIMESTAMP, 0);
   }
-  int16_t z() const {
-    return GetField<int16_t>(VT_Z, 0);
+  uint64_t observertimestamp() const {
+    return GetField<uint64_t>(VT_OBSERVERTIMESTAMP, 0);
   }
   bool Verify(::flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
-           VerifyField<int16_t>(verifier, VT_X, 2) &&
-           VerifyField<int16_t>(verifier, VT_Y, 2) &&
-           VerifyField<int16_t>(verifier, VT_Z, 2) &&
+           VerifyField<uint64_t>(verifier, VT_OFFSET, 8) &&
+           VerifyField<uint64_t>(verifier, VT_EDGETIMESTAMP, 8) &&
+           VerifyField<uint64_t>(verifier, VT_OBSERVERTIMESTAMP, 8) &&
            verifier.EndTable();
   }
-  InertialValueT *UnPack(const ::flatbuffers::resolver_function_t *_resolver = nullptr) const;
-  void UnPackTo(InertialValueT *_o, const ::flatbuffers::resolver_function_t *_resolver = nullptr) const;
-  static ::flatbuffers::Offset<InertialValue> Pack(::flatbuffers::FlatBufferBuilder &_fbb, const InertialValueT* _o, const ::flatbuffers::rehasher_function_t *_rehasher = nullptr);
+  TimeObserverT *UnPack(const ::flatbuffers::resolver_function_t *_resolver = nullptr) const;
+  void UnPackTo(TimeObserverT *_o, const ::flatbuffers::resolver_function_t *_resolver = nullptr) const;
+  static ::flatbuffers::Offset<TimeObserver> Pack(::flatbuffers::FlatBufferBuilder &_fbb, const TimeObserverT* _o, const ::flatbuffers::rehasher_function_t *_rehasher = nullptr);
 };
 
-struct InertialValueBuilder {
-  typedef InertialValue Table;
+struct TimeObserverBuilder {
+  typedef TimeObserver Table;
   ::flatbuffers::FlatBufferBuilder &fbb_;
   ::flatbuffers::uoffset_t start_;
-  void add_x(int16_t x) {
-    fbb_.AddElement<int16_t>(InertialValue::VT_X, x, 0);
+  void add_offset(uint64_t offset) {
+    fbb_.AddElement<uint64_t>(TimeObserver::VT_OFFSET, offset, 0);
   }
-  void add_y(int16_t y) {
-    fbb_.AddElement<int16_t>(InertialValue::VT_Y, y, 0);
+  void add_edgetimestamp(uint64_t edgetimestamp) {
+    fbb_.AddElement<uint64_t>(TimeObserver::VT_EDGETIMESTAMP, edgetimestamp, 0);
   }
-  void add_z(int16_t z) {
-    fbb_.AddElement<int16_t>(InertialValue::VT_Z, z, 0);
+  void add_observertimestamp(uint64_t observertimestamp) {
+    fbb_.AddElement<uint64_t>(TimeObserver::VT_OBSERVERTIMESTAMP, observertimestamp, 0);
   }
-  explicit InertialValueBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+  explicit TimeObserverBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
   }
-  ::flatbuffers::Offset<InertialValue> Finish() {
+  ::flatbuffers::Offset<TimeObserver> Finish() {
     const auto end = fbb_.EndTable(start_);
-    auto o = ::flatbuffers::Offset<InertialValue>(end);
+    auto o = ::flatbuffers::Offset<TimeObserver>(end);
     return o;
   }
 };
 
-inline ::flatbuffers::Offset<InertialValue> CreateInertialValue(
+inline ::flatbuffers::Offset<TimeObserver> CreateTimeObserver(
     ::flatbuffers::FlatBufferBuilder &_fbb,
-    int16_t x = 0,
-    int16_t y = 0,
-    int16_t z = 0) {
-  InertialValueBuilder builder_(_fbb);
-  builder_.add_z(z);
-  builder_.add_y(y);
-  builder_.add_x(x);
+    uint64_t offset = 0,
+    uint64_t edgetimestamp = 0,
+    uint64_t observertimestamp = 0) {
+  TimeObserverBuilder builder_(_fbb);
+  builder_.add_observertimestamp(observertimestamp);
+  builder_.add_edgetimestamp(edgetimestamp);
+  builder_.add_offset(offset);
   return builder_.Finish();
 }
 
-::flatbuffers::Offset<InertialValue> CreateInertialValue(::flatbuffers::FlatBufferBuilder &_fbb, const InertialValueT *_o, const ::flatbuffers::rehasher_function_t *_rehasher = nullptr);
+::flatbuffers::Offset<TimeObserver> CreateTimeObserver(::flatbuffers::FlatBufferBuilder &_fbb, const TimeObserverT *_o, const ::flatbuffers::rehasher_function_t *_rehasher = nullptr);
 
-inline InertialValueT *InertialValue::UnPack(const ::flatbuffers::resolver_function_t *_resolver) const {
-  auto _o = std::unique_ptr<InertialValueT>(new InertialValueT());
+inline TimeObserverT *TimeObserver::UnPack(const ::flatbuffers::resolver_function_t *_resolver) const {
+  auto _o = std::unique_ptr<TimeObserverT>(new TimeObserverT());
   UnPackTo(_o.get(), _resolver);
   return _o.release();
 }
 
-inline void InertialValue::UnPackTo(InertialValueT *_o, const ::flatbuffers::resolver_function_t *_resolver) const {
+inline void TimeObserver::UnPackTo(TimeObserverT *_o, const ::flatbuffers::resolver_function_t *_resolver) const {
   (void)_o;
   (void)_resolver;
-  { auto _e = x(); _o->x = _e; }
-  { auto _e = y(); _o->y = _e; }
-  { auto _e = z(); _o->z = _e; }
+  { auto _e = offset(); _o->offset = _e; }
+  { auto _e = edgetimestamp(); _o->edgetimestamp = _e; }
+  { auto _e = observertimestamp(); _o->observertimestamp = _e; }
 }
 
-inline ::flatbuffers::Offset<InertialValue> InertialValue::Pack(::flatbuffers::FlatBufferBuilder &_fbb, const InertialValueT* _o, const ::flatbuffers::rehasher_function_t *_rehasher) {
-  return CreateInertialValue(_fbb, _o, _rehasher);
+inline ::flatbuffers::Offset<TimeObserver> TimeObserver::Pack(::flatbuffers::FlatBufferBuilder &_fbb, const TimeObserverT* _o, const ::flatbuffers::rehasher_function_t *_rehasher) {
+  return CreateTimeObserver(_fbb, _o, _rehasher);
 }
 
-inline ::flatbuffers::Offset<InertialValue> CreateInertialValue(::flatbuffers::FlatBufferBuilder &_fbb, const InertialValueT *_o, const ::flatbuffers::rehasher_function_t *_rehasher) {
+inline ::flatbuffers::Offset<TimeObserver> CreateTimeObserver(::flatbuffers::FlatBufferBuilder &_fbb, const TimeObserverT *_o, const ::flatbuffers::rehasher_function_t *_rehasher) {
   (void)_rehasher;
   (void)_o;
-  struct _VectorArgs { ::flatbuffers::FlatBufferBuilder *__fbb; const InertialValueT* __o; const ::flatbuffers::rehasher_function_t *__rehasher; } _va = { &_fbb, _o, _rehasher}; (void)_va;
-  auto _x = _o->x;
-  auto _y = _o->y;
-  auto _z = _o->z;
-  return sample::schema::CreateInertialValue(
+  struct _VectorArgs { ::flatbuffers::FlatBufferBuilder *__fbb; const TimeObserverT* __o; const ::flatbuffers::rehasher_function_t *__rehasher; } _va = { &_fbb, _o, _rehasher}; (void)_va;
+  auto _offset = _o->offset;
+  auto _edgetimestamp = _o->edgetimestamp;
+  auto _observertimestamp = _o->observertimestamp;
+  return sample::schema::CreateTimeObserver(
       _fbb,
-      _x,
-      _y,
-      _z);
+      _offset,
+      _edgetimestamp,
+      _observertimestamp);
 }
 
-inline const sample::schema::InertialValue *GetInertialValue(const void *buf) {
-  return ::flatbuffers::GetRoot<sample::schema::InertialValue>(buf);
+inline const sample::schema::TimeObserver *GetTimeObserver(const void *buf) {
+  return ::flatbuffers::GetRoot<sample::schema::TimeObserver>(buf);
 }
 
-inline const sample::schema::InertialValue *GetSizePrefixedInertialValue(const void *buf) {
-  return ::flatbuffers::GetSizePrefixedRoot<sample::schema::InertialValue>(buf);
+inline const sample::schema::TimeObserver *GetSizePrefixedTimeObserver(const void *buf) {
+  return ::flatbuffers::GetSizePrefixedRoot<sample::schema::TimeObserver>(buf);
 }
 
-inline bool VerifyInertialValueBuffer(
+inline bool VerifyTimeObserverBuffer(
     ::flatbuffers::Verifier &verifier) {
-  return verifier.VerifyBuffer<sample::schema::InertialValue>(nullptr);
+  return verifier.VerifyBuffer<sample::schema::TimeObserver>(nullptr);
 }
 
-inline bool VerifySizePrefixedInertialValueBuffer(
+inline bool VerifySizePrefixedTimeObserverBuffer(
     ::flatbuffers::Verifier &verifier) {
-  return verifier.VerifySizePrefixedBuffer<sample::schema::InertialValue>(nullptr);
+  return verifier.VerifySizePrefixedBuffer<sample::schema::TimeObserver>(nullptr);
 }
 
-inline const char *InertialValueExtension() {
+inline const char *TimeObserverExtension() {
   return "bfbs";
 }
 
-inline void FinishInertialValueBuffer(
+inline void FinishTimeObserverBuffer(
     ::flatbuffers::FlatBufferBuilder &fbb,
-    ::flatbuffers::Offset<sample::schema::InertialValue> root) {
+    ::flatbuffers::Offset<sample::schema::TimeObserver> root) {
   fbb.Finish(root);
 }
 
-inline void FinishSizePrefixedInertialValueBuffer(
+inline void FinishSizePrefixedTimeObserverBuffer(
     ::flatbuffers::FlatBufferBuilder &fbb,
-    ::flatbuffers::Offset<sample::schema::InertialValue> root) {
+    ::flatbuffers::Offset<sample::schema::TimeObserver> root) {
   fbb.FinishSizePrefixed(root);
 }
 
-inline std::unique_ptr<sample::schema::InertialValueT> UnPackInertialValue(
+inline std::unique_ptr<sample::schema::TimeObserverT> UnPackTimeObserver(
     const void *buf,
     const ::flatbuffers::resolver_function_t *res = nullptr) {
-  return std::unique_ptr<sample::schema::InertialValueT>(GetInertialValue(buf)->UnPack(res));
+  return std::unique_ptr<sample::schema::TimeObserverT>(GetTimeObserver(buf)->UnPack(res));
 }
 
-inline std::unique_ptr<sample::schema::InertialValueT> UnPackSizePrefixedInertialValue(
+inline std::unique_ptr<sample::schema::TimeObserverT> UnPackSizePrefixedTimeObserver(
     const void *buf,
     const ::flatbuffers::resolver_function_t *res = nullptr) {
-  return std::unique_ptr<sample::schema::InertialValueT>(GetSizePrefixedInertialValue(buf)->UnPack(res));
+  return std::unique_ptr<sample::schema::TimeObserverT>(GetSizePrefixedTimeObserver(buf)->UnPack(res));
 }
 
 }  // namespace schema
