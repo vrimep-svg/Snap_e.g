@@ -3,9 +3,9 @@
 namespace sample.schema;
 
 table TimeObserver {
-    offset: int64;
-    edgetimestamp: uint64;
-    observertimestamp: uint64;
+    offset_us: int64;
+    edgetimestamp_us: uint64;
+    observertimestamp_us: uint64;
 }
 
 root_type TimeObserver;

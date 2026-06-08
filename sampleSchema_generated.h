@@ -22,33 +22,33 @@ struct TimeObserverT;
 
 struct TimeObserverT : public ::flatbuffers::NativeTable {
   typedef TimeObserver TableType;
-  int64_t offset = 0;
-  uint64_t edgetimestamp = 0;
-  uint64_t observertimestamp = 0;
+  int64_t offset_us = 0;
+  uint64_t edgetimestamp_us = 0;
+  uint64_t observertimestamp_us = 0;
 };
 
 struct TimeObserver FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef TimeObserverT NativeTableType;
   typedef TimeObserverBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
-    VT_OFFSET = 4,
-    VT_EDGETIMESTAMP = 6,
-    VT_OBSERVERTIMESTAMP = 8
+    VT_OFFSET_US = 4,
+    VT_EDGETIMESTAMP_US = 6,
+    VT_OBSERVERTIMESTAMP_US = 8
   };
-  int64_t offset() const {
-    return GetField<int64_t>(VT_OFFSET, 0);
+  int64_t offset_us() const {
+    return GetField<int64_t>(VT_OFFSET_US, 0);
   }
-  uint64_t edgetimestamp() const {
-    return GetField<uint64_t>(VT_EDGETIMESTAMP, 0);
+  uint64_t edgetimestamp_us() const {
+    return GetField<uint64_t>(VT_EDGETIMESTAMP_US, 0);
   }
-  uint64_t observertimestamp() const {
-    return GetField<uint64_t>(VT_OBSERVERTIMESTAMP, 0);
+  uint64_t observertimestamp_us() const {
+    return GetField<uint64_t>(VT_OBSERVERTIMESTAMP_US, 0);
   }
   bool Verify(::flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
-           VerifyField<int64_t>(verifier, VT_OFFSET, 8) &&
-           VerifyField<uint64_t>(verifier, VT_EDGETIMESTAMP, 8) &&
-           VerifyField<uint64_t>(verifier, VT_OBSERVERTIMESTAMP, 8) &&
+           VerifyField<int64_t>(verifier, VT_OFFSET_US, 8) &&
+           VerifyField<uint64_t>(verifier, VT_EDGETIMESTAMP_US, 8) &&
+           VerifyField<uint64_t>(verifier, VT_OBSERVERTIMESTAMP_US, 8) &&
            verifier.EndTable();
   }
   TimeObserverT *UnPack(const ::flatbuffers::resolver_function_t *_resolver = nullptr) const;
@@ -60,14 +60,14 @@ struct TimeObserverBuilder {
   typedef TimeObserver Table;
   ::flatbuffers::FlatBufferBuilder &fbb_;
   ::flatbuffers::uoffset_t start_;
-  void add_offset(int64_t offset) {
-    fbb_.AddElement<int64_t>(TimeObserver::VT_OFFSET, offset, 0);
+  void add_offset_us(int64_t offset_us) {
+    fbb_.AddElement<int64_t>(TimeObserver::VT_OFFSET_US, offset_us, 0);
   }
-  void add_edgetimestamp(uint64_t edgetimestamp) {
-    fbb_.AddElement<uint64_t>(TimeObserver::VT_EDGETIMESTAMP, edgetimestamp, 0);
+  void add_edgetimestamp_us(uint64_t edgetimestamp_us) {
+    fbb_.AddElement<uint64_t>(TimeObserver::VT_EDGETIMESTAMP_US, edgetimestamp_us, 0);
   }
-  void add_observertimestamp(uint64_t observertimestamp) {
-    fbb_.AddElement<uint64_t>(TimeObserver::VT_OBSERVERTIMESTAMP, observertimestamp, 0);
+  void add_observertimestamp_us(uint64_t observertimestamp_us) {
+    fbb_.AddElement<uint64_t>(TimeObserver::VT_OBSERVERTIMESTAMP_US, observertimestamp_us, 0);
   }
   explicit TimeObserverBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
@@ -82,13 +82,13 @@ struct TimeObserverBuilder {
 
 inline ::flatbuffers::Offset<TimeObserver> CreateTimeObserver(
     ::flatbuffers::FlatBufferBuilder &_fbb,
-    int64_t offset = 0,
-    uint64_t edgetimestamp = 0,
-    uint64_t observertimestamp = 0) {
+    int64_t offset_us = 0,
+    uint64_t edgetimestamp_us = 0,
+    uint64_t observertimestamp_us = 0) {
   TimeObserverBuilder builder_(_fbb);
-  builder_.add_observertimestamp(observertimestamp);
-  builder_.add_edgetimestamp(edgetimestamp);
-  builder_.add_offset(offset);
+  builder_.add_observertimestamp_us(observertimestamp_us);
+  builder_.add_edgetimestamp_us(edgetimestamp_us);
+  builder_.add_offset_us(offset_us);
   return builder_.Finish();
 }
 
@@ -103,9 +103,9 @@ inline TimeObserverT *TimeObserver::UnPack(const ::flatbuffers::resolver_functio
 inline void TimeObserver::UnPackTo(TimeObserverT *_o, const ::flatbuffers::resolver_function_t *_resolver) const {
   (void)_o;
   (void)_resolver;
-  { auto _e = offset(); _o->offset = _e; }
-  { auto _e = edgetimestamp(); _o->edgetimestamp = _e; }
-  { auto _e = observertimestamp(); _o->observertimestamp = _e; }
+  { auto _e = offset_us(); _o->offset_us = _e; }
+  { auto _e = edgetimestamp_us(); _o->edgetimestamp_us = _e; }
+  { auto _e = observertimestamp_us(); _o->observertimestamp_us = _e; }
 }
 
 inline ::flatbuffers::Offset<TimeObserver> TimeObserver::Pack(::flatbuffers::FlatBufferBuilder &_fbb, const TimeObserverT* _o, const ::flatbuffers::rehasher_function_t *_rehasher) {
@@ -116,14 +116,14 @@ inline ::flatbuffers::Offset<TimeObserver> CreateTimeObserver(::flatbuffers::Fla
   (void)_rehasher;
   (void)_o;
   struct _VectorArgs { ::flatbuffers::FlatBufferBuilder *__fbb; const TimeObserverT* __o; const ::flatbuffers::rehasher_function_t *__rehasher; } _va = { &_fbb, _o, _rehasher}; (void)_va;
-  auto _offset = _o->offset;
-  auto _edgetimestamp = _o->edgetimestamp;
-  auto _observertimestamp = _o->observertimestamp;
+  auto _offset_us = _o->offset_us;
+  auto _edgetimestamp_us = _o->edgetimestamp_us;
+  auto _observertimestamp_us = _o->observertimestamp_us;
   return sample::schema::CreateTimeObserver(
       _fbb,
-      _offset,
-      _edgetimestamp,
-      _observertimestamp);
+      _offset_us,
+      _edgetimestamp_us,
+      _observertimestamp_us);
 }
 
 inline const sample::schema::TimeObserver *GetTimeObserver(const void *buf) {
