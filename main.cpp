@@ -207,6 +207,8 @@ int main(void)
     const char* ntpServer = "192.168.1.218"; // local NTP server
     int64_t lastOffset100ns = 0;
     int64_t lastDelay100ns = 0;
+    uint64_t lastT1Filetime100ns = getCurrentTimestampFiletime();
+    uint64_t lastT2Filetime100ns = getCurrentTimestampFiletime();
     uint64_t lastT3Filetime100ns = getCurrentTimestampFiletime();
     uint64_t lastT4Filetime100ns = getCurrentTimestampFiletime();
 
@@ -216,16 +218,18 @@ int main(void)
 	{
 		int64_t offset100ns = 0;
 		int64_t delay100ns = 0;
-		uint64_t t1Filetime100ns = 0;
-		uint64_t t2Filetime100ns = 0;
-		uint64_t t3Filetime100ns = 0;
-		uint64_t t4Filetime100ns = 0;
+    uint64_t t1Filetime100ns = 0;
+    uint64_t t2Filetime100ns = 0;
+    uint64_t t3Filetime100ns = 0;
+    uint64_t t4Filetime100ns = 0;
 		if (queryNtpServer(ntpServer, offset100ns, delay100ns, t1Filetime100ns, t2Filetime100ns, t3Filetime100ns, t4Filetime100ns))
 		{
 			lastOffset100ns = offset100ns;
 			lastDelay100ns = delay100ns;
-			lastT3Filetime100ns = t3Filetime100ns;
-			lastT4Filetime100ns = t4Filetime100ns;
+      lastT1Filetime100ns = t1Filetime100ns;
+      lastT2Filetime100ns = t2Filetime100ns;
+      lastT3Filetime100ns = t3Filetime100ns;
+      lastT4Filetime100ns = t4Filetime100ns;
 			double offsetSeconds = static_cast<double>(offset100ns) / 1e7;
 			double delaySeconds = static_cast<double>(delay100ns) / 1e7;
 			std::cout << "INFO NTP offset: " << offsetSeconds << " seconds, delay: " << delaySeconds << " seconds" << std::endl;
@@ -237,7 +241,9 @@ int main(void)
 			std::cout << "WARNING NTP query failed, keeping previous offset: " << offsetSeconds << " seconds, delay: " << delaySeconds << " seconds" << std::endl;
 		}
 
-		providerNodeStatic->updateData(lastOffset100ns, lastT4Filetime100ns, lastT3Filetime100ns);
+    providerNodeStatic->updateData(lastOffset100ns, lastT4Filetime100ns, lastT3Filetime100ns,
+                 lastT1Filetime100ns, lastT2Filetime100ns, lastT3Filetime100ns, lastT4Filetime100ns,
+                 lastDelay100ns);
 
 		std::this_thread::sleep_for(std::chrono::seconds(10));
 	}

@@ -82,7 +82,9 @@ public:
   // Create virtual nodes and register them in the ctrlX Data Layer
   void registerNodes();
 
-  void updateData(int64_t offset100ns, uint64_t edge, uint64_t observer);
+  void updateData(int64_t offset100ns, uint64_t edge, uint64_t observer,
+                  uint64_t t1, uint64_t t2, uint64_t t3, uint64_t t4,
+                  int64_t roundtrip100ns);
   // Will be called by the ctrlX Data Layer broker whenever a sub node should be created.
   virtual void onCreate(
     const std::string& address,

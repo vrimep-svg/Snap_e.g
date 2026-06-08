@@ -142,7 +142,9 @@ ProviderNodeAllData::ProviderNodeAllData(comm::datalayer::IProvider3* provider, 
   m_metadata = createMetadata(comm::datalayer::Variant(), m_addressBase);
 }
 
-void ProviderNodeAllData::updateData(int64_t offset100ns, uint64_t edge, uint64_t observer)
+void ProviderNodeAllData::updateData(int64_t offset100ns, uint64_t edge, uint64_t observer,
+                  uint64_t t1, uint64_t t2, uint64_t t3, uint64_t t4,
+                  int64_t roundtrip100ns)
 {
     std::lock_guard<std::mutex> lock(m_dataMutex);
 
@@ -150,6 +152,12 @@ void ProviderNodeAllData::updateData(int64_t offset100ns, uint64_t edge, uint64_
     auto* offsetDurationContainer = getDataContainer(m_addressBase + "offset_duration");
     auto* edgeContainer = getDataContainer(m_addressBase + "edgetimestamp");
     auto* obsContainer = getDataContainer(m_addressBase + "observertimestamp");
+  auto* ntp_t1_container = getDataContainer(m_addressBase + "NTP/t1_edge_req_sent");
+  auto* ntp_t2_container = getDataContainer(m_addressBase + "NTP/t2_obs_req_arr");
+  auto* ntp_t3_container = getDataContainer(m_addressBase + "NTP/t3_obs_reply_sent");
+  auto* ntp_t4_container = getDataContainer(m_addressBase + "NTP/t4_edge_reply_arr");
+  auto* ntp_offsetDurationContainer = getDataContainer(m_addressBase + "NTP/offset_duration");
+  auto* ntp_roundtripDurationContainer = getDataContainer(m_addressBase + "NTP/roundtrip_delay_duration");
     auto* fbContainer = getDataContainer(m_addressBase + "value");
 
     int64_t offsetMs = offset100ns / 10000;
@@ -185,6 +193,40 @@ void ProviderNodeAllData::updateData(int64_t offset100ns, uint64_t edge, uint64_
 
     std::string offsetDuration = durationStream.str();
 
+    // --- format roundtrip duration (from roundtrip100ns) ---
+    int64_t roundtripMs = roundtrip100ns / 10000;
+    int64_t absRoundtripMs = roundtripMs < 0 ? -roundtripMs : roundtripMs;
+    int64_t r_hours = absRoundtripMs / 3600000;
+    int64_t r_minutes = (absRoundtripMs % 3600000) / 60000;
+    int64_t r_seconds = (absRoundtripMs % 60000) / 1000;
+    int64_t r_millis = absRoundtripMs % 1000;
+
+    std::ostringstream roundtripStream;
+    if (roundtripMs < 0) {
+      roundtripStream << "-";
+    }
+    if (r_hours > 0) {
+      roundtripStream << r_hours << "h";
+    }
+    if (r_minutes > 0 || r_hours > 0) {
+      roundtripStream << r_minutes << "m";
+    }
+    if (r_seconds > 0 || r_minutes > 0 || r_hours > 0) {
+      roundtripStream << r_seconds;
+      if (r_millis != 0) {
+        roundtripStream << "." << std::setw(3) << std::setfill('0') << r_millis;
+      }
+      roundtripStream << "s";
+    }
+    else if (r_millis != 0) {
+      roundtripStream << r_millis << "ms";
+    }
+    else {
+      roundtripStream << "0ms";
+    }
+
+    std::string roundtripDuration = roundtripStream.str();
+
     // --- update scalars first ---
     if (offsetMsContainer) {
         comm::datalayer::Variant v;
@@ -198,6 +240,13 @@ void ProviderNodeAllData::updateData(int64_t offset100ns, uint64_t edge, uint64_
         offsetDurationContainer->m_data = v;
     }
 
+    // duplicate the offset_duration inside NTP folder if present
+    if (ntp_offsetDurationContainer) {
+      comm::datalayer::Variant v;
+      v.setValue(offsetDuration);
+      ntp_offsetDurationContainer->m_data = v;
+    }
+
     if (edgeContainer) {
         comm::datalayer::Variant v;
         v.setTimestamp(edge);
@@ -208,6 +257,35 @@ void ProviderNodeAllData::updateData(int64_t offset100ns, uint64_t edge, uint64_
         comm::datalayer::Variant v;
         v.setTimestamp(observer);
         obsContainer->m_data = v;
+    }
+
+    // NTP timestamp variables
+    if (ntp_t1_container) {
+      comm::datalayer::Variant v;
+      v.setTimestamp(t1);
+      ntp_t1_container->m_data = v;
+    }
+    if (ntp_t2_container) {
+      comm::datalayer::Variant v;
+      v.setTimestamp(t2);
+      ntp_t2_container->m_data = v;
+    }
+    if (ntp_t3_container) {
+      comm::datalayer::Variant v;
+      v.setTimestamp(t3);
+      ntp_t3_container->m_data = v;
+    }
+    if (ntp_t4_container) {
+      comm::datalayer::Variant v;
+      v.setTimestamp(t4);
+      ntp_t4_container->m_data = v;
+    }
+
+    // roundtrip delay duration
+    if (ntp_roundtripDurationContainer) {
+      comm::datalayer::Variant v;
+      v.setValue(roundtripDuration);
+      ntp_roundtripDurationContainer->m_data = v;
     }
 
     // --- update flatbuffer LAST ---
@@ -261,6 +339,37 @@ void ProviderNodeAllData::registerNodes()
     data = comm::datalayer::Variant();
     result = data.setTimestamp(currentTime);
     createDataContainer(result, "edgetimestamp", data);
+
+    // --- NTP folder variables ---
+    // t1_edge_req_sent
+    data = comm::datalayer::Variant();
+    result = data.setTimestamp(currentTime);
+    createDataContainer(result, "NTP/t1_edge_req_sent", data);
+
+    // t2_obs_req_arr
+    data = comm::datalayer::Variant();
+    result = data.setTimestamp(currentTime);
+    createDataContainer(result, "NTP/t2_obs_req_arr", data);
+
+    // t3_obs_reply_sent
+    data = comm::datalayer::Variant();
+    result = data.setTimestamp(currentTime);
+    createDataContainer(result, "NTP/t3_obs_reply_sent", data);
+
+    // t4_edge_reply_arr
+    data = comm::datalayer::Variant();
+    result = data.setTimestamp(currentTime);
+    createDataContainer(result, "NTP/t4_edge_reply_arr", data);
+
+    // duplicate offset_duration inside NTP
+    data = comm::datalayer::Variant();
+    result = data.setValue(std::string("0ms"));
+    createDataContainer(result, "NTP/offset_duration", data);
+
+    // roundtrip delay duration
+    data = comm::datalayer::Variant();
+    result = data.setValue(std::string("0ms"));
+    createDataContainer(result, "NTP/roundtrip_delay_duration", data);
 
     // --- flatbuffer ---
     flatbuffers::FlatBufferBuilder builder;
