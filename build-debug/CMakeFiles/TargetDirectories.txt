@@ -1,0 +1,7 @@
+/home/ricardo/ctrlX/ctrlx-automation-sdk/samples-cpp/Snap_e.g/build-debug/CMakeFiles/allDataProvider.dir
+/home/ricardo/ctrlX/ctrlx-automation-sdk/samples-cpp/Snap_e.g/build-debug/CMakeFiles/edit_cache.dir
+/home/ricardo/ctrlX/ctrlx-automation-sdk/samples-cpp/Snap_e.g/build-debug/CMakeFiles/rebuild_cache.dir
+/home/ricardo/ctrlX/ctrlx-automation-sdk/samples-cpp/Snap_e.g/build-debug/CMakeFiles/list_install_components.dir
+/home/ricardo/ctrlX/ctrlx-automation-sdk/samples-cpp/Snap_e.g/build-debug/CMakeFiles/install.dir
+/home/ricardo/ctrlX/ctrlx-automation-sdk/samples-cpp/Snap_e.g/build-debug/CMakeFiles/install/local.dir
+/home/ricardo/ctrlX/ctrlx-automation-sdk/samples-cpp/Snap_e.g/build-debug/CMakeFiles/install/strip.dir

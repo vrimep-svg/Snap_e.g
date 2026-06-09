@@ -48,21 +48,16 @@ set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -DMY_DEBUG")
 # set libraries dirs and includes
 #
 IF( ${BUILD_KIT} MATCHES "aarch64")
-  set(CMAKE_C_COMPILER aarch64-linux-gnu-gcc-12)
-  set(CMAKE_CXX_COMPILER aarch64-linux-gnu-g++-12)
-  set(PLATFORM_NAME "ubuntu22-gcc-aarch64")
-  set(SNAP_ARCH "arm64")
-  message(STATUS "--- CRITICAL CONFIRMATION: USING ARM64 CROSS-COMPILER ---")
-  add_custom_target(PrintMessage ALL COMMAND ${CMAKE_COMMAND} -E echo Ricardo_Was_here!)
+  SET(PLATFORM_NAME "ubuntu22-gcc-aarch64")
+  SET(SNAP_ARCH "arm64")
+  SET(CMAKE_C_COMPILER aarch64-linux-gnu-gcc)
+  SET(CMAKE_CXX_COMPILER aarch64-linux-gnu-g++)
 ELSE()
-  set(CMAKE_C_COMPILER gcc-12)
-  set(CMAKE_CXX_COMPILER g++-12)
-  set(PLATFORM_NAME "ubuntu22-gcc-x64")
-  set(SNAP_ARCH "amd64")
-  message(STATUS "--- CRITICAL: CONFIGURING FOR AMD64 COMPILATION ---")
-  add_custom_target(PrintMessage ALL COMMAND ${CMAKE_COMMAND} -E echo Ricardo_Was_here!)
+  SET(PLATFORM_NAME "ubuntu22-gcc-x64")
+  SET(SNAP_ARCH "amd64")
+  SET(CMAKE_C_COMPILER gcc)
+  SET(CMAKE_CXX_COMPILER g++)
 ENDIF()
-
 
 #
 # set source files for each executable

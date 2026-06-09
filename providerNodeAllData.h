@@ -21,6 +21,9 @@
 
 #include "dataContainer.h"
 
+#include <mutex>
+
+
  /*
    ProviderNodeAllData
    This class implements the IProviderNode interface and provides an 'all-data' ctrlX Data Layer sub branch.
@@ -51,10 +54,13 @@ protected:
   std::string m_addressBase;
 
   // Path of the inertial value type
-  std::string m_typeInertialValue = "types/sdk/cpp/provider/alldata/inertialValue";
-
+  std::string m_typeInertialValue = "types/sample/TimeObserver";
+  
   // Metadata for the providerNode
   comm::datalayer::Variant m_metadata;
+
+  // Mutex for protecting data access
+  std::mutex m_dataMutex;
 
   // Search an existing DataContainer instance for this address
   DataContainer* getDataContainer(const std::string& address);
@@ -76,6 +82,9 @@ public:
   // Create virtual nodes and register them in the ctrlX Data Layer
   void registerNodes();
 
+  void updateData(int64_t offset100ns, uint64_t edge, uint64_t observer,
+                  uint64_t t1, uint64_t t2, uint64_t t3, uint64_t t4,
+                  int64_t roundtrip100ns);
   // Will be called by the ctrlX Data Layer broker whenever a sub node should be created.
   virtual void onCreate(
     const std::string& address,
