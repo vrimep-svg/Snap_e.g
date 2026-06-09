@@ -1,11 +1,25 @@
 // IDL file for sample schema.
 
-namespace sample.schema;
-
-table TimeObserver {
+// Signal carrying an offset measurement in milliseconds
+namespace sample.schema.TimeObserver.Static.struct1;
+table Offset_Signal {
     offset_us: int64;
     edgetimestamp_us: uint64;
-    observertimestamp_us: uint64;
 }
 
-root_type TimeObserver;
+// Signal carrying a round-trip delay measurement in milliseconds
+namespace sample.schema.TimeObserver.Static.struct2;
+table Delay_Signal {
+    roundTripDelay_us: int64;
+    edgetimestamp_us: uint64;
+}
+
+// Offset signal that also carries a delay value in the StatusCode field
+namespace sample.schema.TimeObserver.Static.struct3;
+table OffsetQualityAware {
+    offset_us: int64;
+    edgetimestamp_us: uint64;
+    StatusCode: int64;
+}
+
+root_type sample.schema.TimeObserver.Static.struct1.Offset_Signal;

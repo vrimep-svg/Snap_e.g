@@ -150,15 +150,18 @@ void ProviderNodeAllData::updateData(int64_t offset100ns, uint64_t edge, uint64_
 
     auto* offsetMsContainer = getDataContainer(m_addressBase + "offset_ms");
     auto* offsetDurationContainer = getDataContainer(m_addressBase + "offset_duration");
+    auto* roundtripDurationContainer = getDataContainer(m_addressBase + "RoundTripDelay_duration");
     auto* edgeContainer = getDataContainer(m_addressBase + "edgetimestamp");
     auto* obsContainer = getDataContainer(m_addressBase + "observertimestamp");
-  auto* ntp_t1_container = getDataContainer(m_addressBase + "NTP/t1_edge_req_sent");
-  auto* ntp_t2_container = getDataContainer(m_addressBase + "NTP/t2_obs_req_arr");
-  auto* ntp_t3_container = getDataContainer(m_addressBase + "NTP/t3_obs_reply_sent");
-  auto* ntp_t4_container = getDataContainer(m_addressBase + "NTP/t4_edge_reply_arr");
-  auto* ntp_offsetDurationContainer = getDataContainer(m_addressBase + "NTP/offset_duration");
-  auto* ntp_roundtripDurationContainer = getDataContainer(m_addressBase + "NTP/roundtrip_delay_duration");
-    auto* fbContainer = getDataContainer(m_addressBase + "value");
+    auto* ntp_t1_container = getDataContainer(m_addressBase + "NTP/t1_edge_req_sent");
+    auto* ntp_t2_container = getDataContainer(m_addressBase + "NTP/t2_obs_req_arr");
+    auto* ntp_t3_container = getDataContainer(m_addressBase + "NTP/t3_obs_reply_sent");
+    auto* ntp_t4_container = getDataContainer(m_addressBase + "NTP/t4_edge_reply_arr");
+    auto* ntp_offsetDurationContainer = getDataContainer(m_addressBase + "NTP/offset_duration");
+    auto* ntp_roundtripDurationContainer = getDataContainer(m_addressBase + "NTP/roundtrip_delay_duration");
+    auto* fbContainer1 = getDataContainer(m_addressBase + "TimeObserver/Static/struct1/value");
+    auto* fbContainer2 = getDataContainer(m_addressBase + "TimeObserver/Static/struct2/value");
+    auto* fbContainer3 = getDataContainer(m_addressBase + "TimeObserver/Static/struct3/value");
 
     int64_t offsetMs = offset100ns / 10000;
     int64_t absOffsetMs = offsetMs < 0 ? -offsetMs : offsetMs;
@@ -240,6 +243,12 @@ void ProviderNodeAllData::updateData(int64_t offset100ns, uint64_t edge, uint64_
         offsetDurationContainer->m_data = v;
     }
 
+    if (roundtripDurationContainer) {
+        comm::datalayer::Variant v;
+        v.setValue(roundtripDuration);
+        roundtripDurationContainer->m_data = v;
+    }
+
     // duplicate the offset_duration inside NTP folder if present
     if (ntp_offsetDurationContainer) {
       comm::datalayer::Variant v;
@@ -288,12 +297,31 @@ void ProviderNodeAllData::updateData(int64_t offset100ns, uint64_t edge, uint64_
       ntp_roundtripDurationContainer->m_data = v;
     }
 
-    // --- update flatbuffer LAST ---
-    if (fbContainer) {
-        flatbuffers::FlatBufferBuilder builder;
-        auto fb = sample::schema::CreateTimeObserver(builder, offset100ns, edge, observer);
-        builder.Finish(fb);
-        fbContainer->m_data.shareFlatbuffers(builder);
+    // --- update flatbuffers LAST ---
+    // Struct1: Offset_Signal
+    if (fbContainer1) {
+        flatbuffers::FlatBufferBuilder builder1;
+        auto fb1 = sample::schema::TimeObserver::Static::struct1::CreateOffset_Signal(builder1, offset100ns, edge);
+        builder1.Finish(fb1);
+        fbContainer1->m_data.shareFlatbuffers(builder1);
+    }
+
+    // Struct2: Delay_Signal
+    if (fbContainer2) {
+        flatbuffers::FlatBufferBuilder builder2;
+        int64_t roundTripDelay = 0;
+        auto fb2 = sample::schema::TimeObserver::Static::struct2::CreateDelay_Signal(builder2, roundTripDelay, edge);
+        builder2.Finish(fb2);
+        fbContainer2->m_data.shareFlatbuffers(builder2);
+    }
+
+    // Struct3: OffsetQualityAware
+    if (fbContainer3) {
+        flatbuffers::FlatBufferBuilder builder3;
+        int64_t statusCode = 0;
+        auto fb3 = sample::schema::TimeObserver::Static::struct3::CreateOffsetQualityAware(builder3, offset100ns, edge, statusCode);
+        builder3.Finish(fb3);
+        fbContainer3->m_data.shareFlatbuffers(builder3);
     }
 
     // Note: Notification of changes would be sent here if the API supported it
@@ -325,6 +353,11 @@ void ProviderNodeAllData::registerNodes()
     result = data.setValue((int64_t)0);
     createDataContainer(result, "offset_ms", data);
 
+    // --- RoundTripDelay duration ---
+    data = comm::datalayer::Variant();
+    result = data.setValue(std::string("0ms"));
+    createDataContainer(result, "RoundTripDelay_duration", data);
+    
     // --- offset duration ---
     data = comm::datalayer::Variant();
     result = data.setValue(std::string("0ms"));
@@ -371,20 +404,39 @@ void ProviderNodeAllData::registerNodes()
     result = data.setValue(std::string("0ms"));
     createDataContainer(result, "NTP/roundtrip_delay_duration", data);
 
-    // --- flatbuffer ---
-    flatbuffers::FlatBufferBuilder builder;
-
+    // --- flatbuffer struct1 (Offset_Signal) ---
+    flatbuffers::FlatBufferBuilder builder1;
     int64_t offset = 0;
     uint64_t edge = currentTime;
-    uint64_t observer = currentTime;
 
-    auto fb = sample::schema::CreateTimeObserver(builder, offset, edge, observer);
-    builder.Finish(fb);
+    auto fb1 = sample::schema::TimeObserver::Static::struct1::CreateOffset_Signal(builder1, offset, edge);
+    builder1.Finish(fb1);
 
     data = comm::datalayer::Variant();
-    result = data.shareFlatbuffers(builder);
+    result = data.shareFlatbuffers(builder1);
+    createDataContainer(result, "struct1", data);
 
-    createDataContainer(result, "value", data);
+    // --- flatbuffer struct2 (Delay_Signal) ---
+    flatbuffers::FlatBufferBuilder builder2;
+    int64_t roundTripDelay = 0;
+
+    auto fb2 = sample::schema::TimeObserver::Static::struct2::CreateDelay_Signal(builder2, roundTripDelay, edge);
+    builder2.Finish(fb2);
+
+    data = comm::datalayer::Variant();
+    result = data.shareFlatbuffers(builder2);
+    createDataContainer(result, "struct2", data);
+
+    // --- flatbuffer struct3 (OffsetQualityAware) ---
+    flatbuffers::FlatBufferBuilder builder3;
+    int64_t statusCode = 0;
+
+    auto fb3 = sample::schema::TimeObserver::Static::struct3::CreateOffsetQualityAware(builder3, offset, edge, statusCode);
+    builder3.Finish(fb3);
+
+    data = comm::datalayer::Variant();
+    result = data.shareFlatbuffers(builder3);
+    createDataContainer(result, "struct3", data);
 }
 // This function will be called whenever a object should be created.
 void ProviderNodeAllData::onCreate(
