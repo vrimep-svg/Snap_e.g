@@ -3,6 +3,41 @@
  *
  * SPDX-License-Identifier: MIT
  */
+ /*
+ An NTP message is a fixed 48-byte payload inside a UDP packet (port 123).
+It contains metadata + multiple timestamps.
+
+🔧 Structure (simplified)
+Byte Offset   Field
+-------------------------------------
+0             LI | VN | Mode
+1             Stratum
+2             Poll
+3             Precision
+4–7           Root Delay
+8–11          Root Dispersion
+12–15         Reference ID
+16–23         Reference Timestamp
+24–31         Origin Timestamp   (T1)
+32–39         Receive Timestamp  (T2)
+40–47         Transmit Timestamp (T3)
+
+Origin Timestamp (bytes 24–31)
+T1 (what server received from you)Receive Timestamp (bytes 32–39) 
+T2 — when server received your requestTransmit Timestamp (bytes 40–47) 
+T3 — when server sent reply
+
+Client                    Server
+SendRequest
+	  |------------ T1 --------->|
+	  |             |  			 |T2 (recv)
+	  |             |  			 |processing
+	  |<---- T3 ----|------------|Send Reply
+	T4|             |  			 |
+Receive 
+Reply 
+
+*/
 
 #include <string>
 #include <chrono>
